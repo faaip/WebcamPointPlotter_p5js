@@ -11,13 +11,25 @@ function setup() {
 }
 
 function draw() {
+  rotateY(PI); // Flipping image
+  print(mouseX);
+  // Key controls
+  if (keyIsDown(CONTROL)) {
+    rotateX(frameCount * 0.005);
+  }
+
+  if (keyIsDown(OPTION)) {
+    rotateX(frameCount * 0.005);
+
+    rotateZ(frameCount * 0.005);
+  }
   orbitControl();
   background(255);
   ambientLight(random(180, 255));
+
+
   translate(-video.width / 2, -video.height / 2, 0);
   var size = 12;
-  var xT = size;
-  var yT = size
   var videopixels = video.loadPixels().pixels;
   for (var y = 0; y < video.height; y += size) {
     for (var x = 0; x < video.width; x += size) {
@@ -26,14 +38,15 @@ function draw() {
       var g = videopixels[i + 1]
       var b = videopixels[i + 2]
       specularMaterial(r, g, b);
-      var z = r + g;
-      translate(xT, 0, z);
-      sphere(map(mouseY, 0, height, 1, 15));
-      translate(0, 0, -z);
+      var z = -(r+g+b)/2;
+      translate(size, 0, z);
+      if (r + g + b > mouseX - width / 2) {
+        box(map(mouseY, 0, height, 1, 15));
+      }
+      translate(0, 0, -z); // New "line" of blocks
     }
-    translate(-x, yT, 0);
+    translate(-x, size, 0); // Making sure it's a rectangular box of boxes
   }
-
   video.hide();
 }
 
